@@ -22,3 +22,6 @@ Make sure you have the following installed:
 
 - [.NET SDK](https://dotnet.microsoft.com/download) (version X.X or higher)
 - [Visual Studio](https://visualstudio.microsoft.com/) or [Visual Studio Code](https://code.visualstudio.com/)
+- Download the ZIP File and extract the information
+- Open Andriod Studio and click "Open ", locate the file and click OPEN
+- Once in Andriod Studio click the "RUN" button and enjoy keeping budgets
