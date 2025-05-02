@@ -28,6 +28,7 @@ class CategoryDialogFragment(private val categorySelectionListener: CategorySele
         fun onCategorySelected(categoryName: String)
     }
 
+    // initialising variables 
     private lateinit var categoryRecyclerView: RecyclerView
     private lateinit var categoryAdapter: CategoryAdapter
     private lateinit var addCategoryButton: ImageButton
@@ -35,13 +36,14 @@ class CategoryDialogFragment(private val categorySelectionListener: CategorySele
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val view = layoutInflater.inflate(R.layout.fragment_category_list, null)
+        // calling in the recycler views 
         categoryRecyclerView = view.findViewById(R.id.categoryRecyclerView)
         categoryRecyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
         addCategoryButton = view.findViewById(R.id.addCategoryButton)
 
         database = CategoryDatabase.getDatabase(requireContext())
         val categoryDao = database.category()
-
+// runnign on a side thread
         CoroutineScope(Dispatchers.IO).launch {
             val categories = categoryDao.getAllCategories()
             withContext(Dispatchers.Main) {
@@ -55,6 +57,7 @@ class CategoryDialogFragment(private val categorySelectionListener: CategorySele
                 categoryRecyclerView.adapter = categoryAdapter
             }
         }
+        // button for categories
         addCategoryButton.setOnClickListener {
             val intent = Intent(requireContext(), AddCategoryActivity::class.java)
             startActivity(intent)
