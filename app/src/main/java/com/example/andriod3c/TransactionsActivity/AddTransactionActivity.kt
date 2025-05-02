@@ -50,6 +50,7 @@ import java.io.Serializable //Import Serializable
 
 class AddTransactionActivity : AppCompatActivity(), CategoryDialogFragment.CategorySelectionListener {
 
+    // lots and lots of varriables 
     private lateinit var labelInput: TextInputEditText
     private lateinit var amountInput: TextInputEditText
     private lateinit var labelLayout: TextInputLayout
@@ -171,6 +172,7 @@ class AddTransactionActivity : AppCompatActivity(), CategoryDialogFragment.Categ
             }
         }
 
+        // this button is for the user to choose weather they are adding an income or expense 
         IncomeExpenseToggleButton.setOnClickListener {
             if (IncomeExpenseToggleButton.isChecked) {
                 IncomeExpenseToggleButton.text = "Expense"
@@ -232,6 +234,7 @@ class AddTransactionActivity : AppCompatActivity(), CategoryDialogFragment.Categ
             showImagePickerDialog()
         }
 
+        // saves the transactions basically 
         transactionButton.setOnClickListener {
             val labelText = labelInput.text.toString()
             val amountText = amountInput.text.toString()
