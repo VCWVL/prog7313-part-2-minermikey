@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class BudgetPage : AppCompatActivity() {
-
+// initialising variables 
     private lateinit var transactions: List<Transaction>
     private lateinit var categoryTransactionAdapter: CategoryTransactionAdapter
     private lateinit var linearLayoutManager: LinearLayoutManager
@@ -35,23 +35,22 @@ class BudgetPage : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_budget_page)
-
+// initalising database 
         db = Room.databaseBuilder(
             applicationContext,
             TransactionsDatabase::class.java,
             "transactions"
         )
-            .fallbackToDestructiveMigration()
             .addMigrations(TransactionsDatabase.MIGRATION_1_2)
             .build()
 
         dao = db.transactionDao()
-
+// declaring th elist 
         transactions = listOf()
         val categorySummaries = summarizeTransactionsByCategory(transactions)
         categoryTransactionAdapter = CategoryTransactionAdapter(categorySummaries)
         linearLayoutManager = LinearLayoutManager(this)
-
+// declaring recycler views
         val recyclerView = findViewById<RecyclerView>(R.id.BudgetRecyclerView)
         recyclerView.adapter = categoryTransactionAdapter
         recyclerView.layoutManager = linearLayoutManager
@@ -65,7 +64,7 @@ class BudgetPage : AppCompatActivity() {
         val categorySpinner: Spinner = findViewById(R.id.categorySpinner)
 
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
-
+// code for nav bar 
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> {
@@ -83,7 +82,7 @@ class BudgetPage : AppCompatActivity() {
                 else -> false
             }
         }
-
+// off main thread
         lifecycleScope.launch {
             val data = withContext(Dispatchers.IO) {
                 dao.getAllTransactions()
