@@ -1,1 +1,24 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/nsZO5E7w)
+# Budget Application 
+
+## Features
+
+- Add  income and expenses
+- Categorise transactions
+- View budget summaries and balances
+- Store data persistently using RoomDB
+- Responsive and intuitive UI
+
+##  Technologies Used
+
+- C# (.NET or ASP.NET Core)
+- Kotlin and Java
+- RoomDB 
+
+## Getting Started
+
+### Prerequisites
+
+Make sure you have the following installed:
+
+- [.NET SDK](https://dotnet.microsoft.com/download) (version X.X or higher)
+- [Visual Studio](https://visualstudio.microsoft.com/) or [Visual Studio Code](https://code.visualstudio.com/)
