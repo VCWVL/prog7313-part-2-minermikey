@@ -16,8 +16,6 @@ interface CategoryDao {
     suspend fun delete(category: Category)
     @Query("SELECT COUNT(*) FROM category")
     suspend fun getCategoryCount(): Int
-
-    // New query to get categories by username
     @Query("SELECT * FROM category WHERE username = :username ORDER BY categoryName ASC")
     suspend fun getCategoriesByUsername(username: String): List<Category>
 }

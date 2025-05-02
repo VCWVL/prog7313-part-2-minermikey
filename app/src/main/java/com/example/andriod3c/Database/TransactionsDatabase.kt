@@ -7,10 +7,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.andriod3c.TranactionDAO.Transaction
 import com.example.andriod3c.TranactionDAO.transactionsDAO
 
-@Database(entities = [Transaction::class], version = 6) // Increment the version number!
+@Database(entities = [Transaction::class], version = 6)
 abstract class TransactionsDatabase : RoomDatabase() {
 
-        // Change this name to match your call in BudgetPage
         abstract fun transactionDao(): transactionsDAO
 
         companion object {

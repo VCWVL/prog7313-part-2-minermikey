@@ -76,7 +76,6 @@ class AddTransactionActivity : AppCompatActivity(), CategoryDialogFragment.Categ
     private val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     private val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
 
-    // Image handling
     private lateinit var addImageButton: Button
     private lateinit var imageView: ImageView
     private var imageByteArray: ByteArray? = null
@@ -114,10 +113,9 @@ class AddTransactionActivity : AppCompatActivity(), CategoryDialogFragment.Categ
         startTimeLayout = findViewById(R.id.startTimeLayout)
         endTimeInput = findViewById(R.id.endTimeInput)
         endTimeLayout = findViewById(R.id.endTimeLayout)
-        addImageButton = findViewById(R.id.addImageButton)  // Initialize addImageButton
-        imageView = findViewById(R.id.imageView) // Initialize imageView
+        addImageButton = findViewById(R.id.addImageButton)
+        imageView = findViewById(R.id.imageView)
 
-        // Calculator Buttons
         val button0 = findViewById<Button>(R.id.button0)
         val button1 = findViewById<Button>(R.id.button1)
         val button2 = findViewById<Button>(R.id.button2)
@@ -139,7 +137,6 @@ class AddTransactionActivity : AppCompatActivity(), CategoryDialogFragment.Categ
         val sharedPreferences = getSharedPreferences("login_prefs", MODE_PRIVATE)
         val loggedInUsername = sharedPreferences.getString("userEmail", "") ?: ""
 
-        // Set up listeners for calculator buttons
         button0.setOnClickListener { appendDigit("0") }
         button1.setOnClickListener { appendDigit("1") }
         button2.setOnClickListener { appendDigit("2") }
@@ -186,7 +183,7 @@ class AddTransactionActivity : AppCompatActivity(), CategoryDialogFragment.Categ
             }
         }
 
-        categoryInput.isFocusable = false // Prevent manual typing
+        categoryInput.isFocusable = false
         categoryInput.isClickable = true
         categoryInput.setOnClickListener {
             showCategoryDialogFragment()
@@ -213,7 +210,6 @@ class AddTransactionActivity : AppCompatActivity(), CategoryDialogFragment.Categ
         galleryLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 if (result.resultCode == RESULT_OK) {
-                    // Handle the image selected from the gallery
                     val selectedImageUri = result.data?.data
                     if (selectedImageUri != null) {
                         try {
@@ -232,7 +228,6 @@ class AddTransactionActivity : AppCompatActivity(), CategoryDialogFragment.Categ
                 }
             }
 
-        // Set click listener for the add image button
         addImageButton.setOnClickListener {
             showImagePickerDialog()
         }
@@ -348,7 +343,6 @@ class AddTransactionActivity : AppCompatActivity(), CategoryDialogFragment.Categ
             finish()
         }
 
-        // Initially set the amount input to be non-editable to avoid direct typing
         amountInput.isFocusable = false
         amountInput.isClickable = true
         type = if (IncomeExpenseToggleButton.isChecked) "Expense" else "Income"
@@ -361,7 +355,7 @@ class AddTransactionActivity : AppCompatActivity(), CategoryDialogFragment.Categ
 
     override fun onCategorySelected(categoryName: String) {
         categoryInput.setText(categoryName)
-        categoryLayout.error = null // Clear error when a category is selected
+        categoryLayout.error = null
     }
 
     private fun appendDigit(digit: String) {
@@ -451,26 +445,26 @@ class AddTransactionActivity : AppCompatActivity(), CategoryDialogFragment.Categ
             timeSetListener,
             calendar.get(Calendar.HOUR_OF_DAY),
             calendar.get(Calendar.MINUTE),
-            true // Use 24-hour format
+            true
         ).show()
     }
 
     private fun insert(transaction: Transaction) {
         db = Room.databaseBuilder(
-            applicationContext, // Use applicationContext
+            applicationContext,
             TransactionsDatabase::class.java,
             "transactions"
         )
-            .fallbackToDestructiveMigration() // Keep this for development, remove for production
+            .fallbackToDestructiveMigration()
             .addMigrations(
                 TransactionsDatabase.MIGRATION_1_2,
                 TransactionsDatabase.MIGRATION_2_3,
                 TransactionsDatabase.MIGRATION_3_4,
                 TransactionsDatabase.MIGRATION_4_5,
-                TransactionsDatabase.MIGRATION_5_6 // Add the new migration
+                TransactionsDatabase.MIGRATION_5_6
             )
             .build()
-        CoroutineScope(Dispatchers.IO).launch { // Use CoroutineScope
+        CoroutineScope(Dispatchers.IO).launch {
             db.transactionDao().insertAll(transaction)
             withContext(Dispatchers.Main) {
                 finish()
@@ -484,7 +478,7 @@ class AddTransactionActivity : AppCompatActivity(), CategoryDialogFragment.Categ
         builder.setTitle("Add Photo")
         builder.setItems(options) { dialog, which ->
             when (which) {
-                0 -> openGallery()     // Choose from Gallery
+                0 -> openGallery()
             }
         }
         builder.show()
@@ -497,11 +491,11 @@ class AddTransactionActivity : AppCompatActivity(), CategoryDialogFragment.Categ
     }
 
     private fun processImage(bitmap: Bitmap) {
-        imageView.setImageBitmap(bitmap)  // Display the image in the ImageView
+        imageView.setImageBitmap(bitmap)
 
-        // Convert the Bitmap to a ByteArray
+
         val stream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream) // Adjust quality as needed (80 here)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream)
         imageByteArray = stream.toByteArray()
     }
 

@@ -84,7 +84,6 @@ class BudgetPage : AppCompatActivity() {
             }
         }
 
-        // Fetch data and update UI safely
         lifecycleScope.launch {
             val data = withContext(Dispatchers.IO) {
                 dao.getAllTransactions()
@@ -92,11 +91,9 @@ class BudgetPage : AppCompatActivity() {
 
             transactions = data
 
-            // Update RecyclerView
             val updatedSummaries = summarizeTransactionsByCategory(transactions)
             categoryTransactionAdapter.updateData(updatedSummaries)
 
-            // Populate Spinner with "All Categories" option
             val categoryList = mutableListOf("All Categories")
             categoryList.addAll(transactions.map { it.category }.distinct())
 
@@ -105,23 +102,19 @@ class BudgetPage : AppCompatActivity() {
             categorySpinner.adapter = adapter
 
 
-            // Spinner selection listener
             categorySpinner.setOnItemSelectedListener(object : android.widget.AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: android.widget.AdapterView<*>, view: android.view.View, position: Int, id: Long) {
                     val selectedCategory = parent.getItemAtPosition(position).toString()
 
                     if (selectedCategory == "All Categories") {
-                        // Show all transactions
                         updateRecyclerView(transactions)
                     } else {
-                        // Show filtered
                         val filteredTransactions = filterTransactionsByCategory(transactions, selectedCategory)
                         updateRecyclerView(filteredTransactions)
                     }
                 }
 
                 override fun onNothingSelected(parent: android.widget.AdapterView<*>) {
-                    // No action needed
                 }
             })
 

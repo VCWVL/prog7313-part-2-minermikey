@@ -19,10 +19,8 @@ import kotlinx.coroutines.withContext
 
 class CategoryDialogFragment(private val categorySelectionListener: CategorySelectionListener) : DialogFragment() {
 
-    // Add a default constructor
     constructor() : this(object : CategorySelectionListener {
         override fun onCategorySelected(categoryName: String) {
-            // Optional:  Add default implementation if needed, or leave empty.
         }
     })
 
@@ -33,7 +31,7 @@ class CategoryDialogFragment(private val categorySelectionListener: CategorySele
     private lateinit var categoryRecyclerView: RecyclerView
     private lateinit var categoryAdapter: CategoryAdapter
     private lateinit var addCategoryButton: ImageButton
-    private lateinit var database: CategoryDatabase // Declare the database
+    private lateinit var database: CategoryDatabase
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val view = layoutInflater.inflate(R.layout.fragment_category_list, null)
@@ -41,7 +39,7 @@ class CategoryDialogFragment(private val categorySelectionListener: CategorySele
         categoryRecyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
         addCategoryButton = view.findViewById(R.id.addCategoryButton)
 
-        database = CategoryDatabase.getDatabase(requireContext()) // Initialize the database
+        database = CategoryDatabase.getDatabase(requireContext())
         val categoryDao = database.category()
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -71,6 +69,6 @@ class CategoryDialogFragment(private val categorySelectionListener: CategorySele
 
     override fun onDestroy() {
         super.onDestroy()
-        database.close() // Close the database when the fragment is destroyed.
+        database.close()
     }
 }

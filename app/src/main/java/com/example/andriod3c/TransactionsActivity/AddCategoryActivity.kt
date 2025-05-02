@@ -162,9 +162,9 @@ class AddCategoryActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.IO).launch {
             db.category().insert(category)
-            db.close() // Close the database after operation
+            db.close()
             withContext(Dispatchers.Main) {
-                finish() // Return to the suspended activity (AddTransactionActivity)
+                finish()
             }
         }
     }

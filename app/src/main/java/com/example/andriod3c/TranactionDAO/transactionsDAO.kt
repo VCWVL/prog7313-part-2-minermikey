@@ -10,23 +10,18 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface transactionsDAO {
 
-    // will select alll the infomriaont from the table
     @Query("SELECT * FROM `transactions` ORDER BY date ASC ")
     fun getAll(): List<Transaction>
 
-    // insert informaiton into the table
     @Insert
     fun insertAll(vararg transaction: Transaction)
 
-    // delete ifnormaiton from the table
     @Delete
     fun delete (transaction: Transaction)
 
-    // update the table
     @Update
     fun update(vararg transaction: Transaction )
 
-    // gets informaiton for the graph
     @Query("SELECT * FROM transactions ORDER BY date ASC")
     fun getAllTransactions(): List<Transaction>
 

@@ -15,5 +15,5 @@ data class Category(
     val minBudget: Double = 0.0,
     @ColumnInfo(name = "max_budget")
     val maxBudget: Double = 0.0,
-    val username: String // Added username field
+    val username: String
 )

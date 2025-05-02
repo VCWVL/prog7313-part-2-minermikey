@@ -19,13 +19,12 @@ class AuthenticationRegister : AppCompatActivity() {
 
     private lateinit var db: UserDatabase
     private lateinit var userDao: DOAUserInformaiton
-// This entire class is for registering a user
-        // its takes information and saves it to Room DB
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_authentication_register) // ✅ This matches your provided layout
+        setContentView(R.layout.activity_authentication_register)
 
-        // Initialize Room database
+
         db = Room.databaseBuilder(
             applicationContext,
             UserDatabase::class.java,
@@ -34,24 +33,20 @@ class AuthenticationRegister : AppCompatActivity() {
             .build()
         userDao = db.userDao()
 
-        // Match IDs with XML
         val regiserUsername = findViewById<EditText>(R.id.SignUpPageUserNameInputField)
         val firstpassword = findViewById<EditText>(R.id.SignUpPagePasswordInputField)
         val secondpassword = findViewById<EditText>(R.id.SignUpPagePasswordConfirmationInputField)
         val signUpButton = findViewById<Button>(R.id.SignUpPageSignUpButton)
         val loginText = findViewById<TextView>(R.id.SignUpPageLoginInnText)
 
-        // Go to login page
         loginText.setOnClickListener {
             startActivity(Intent(this, AuthenticationLogin::class.java))
         }
 
-        // Sign up click logic
         signUpButton.setOnClickListener {
             val email = regiserUsername.text.toString().trim()
             val password = firstpassword.text.toString().trim()
             val confirmPassword = secondpassword.text.toString().trim()
-// checks for null fields
             if (email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
 
                 val inflater = layoutInflater
@@ -66,7 +61,6 @@ class AuthenticationRegister : AppCompatActivity() {
                 toast.setGravity(Gravity.BOTTOM, 0, 150)
                 toast.show()
             }
-// checks to ensure all fields are the same
             if (password != confirmPassword) {
 
                 val inflater = layoutInflater

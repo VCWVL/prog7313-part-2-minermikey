@@ -59,30 +59,16 @@ class MainActivity : AppCompatActivity() {
     private var startDateTimestamp: Long = 0L
     private var endDateTimestamp: Long = 0L
 
-
-    /*
-        private lateinit var transactionDao: transactionsDAO
-    */
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-    /*    val recyclerViewss = findViewById<RecyclerView>(R.id.mainrecyclerview)
-        recyclerViewss.layoutManager = linearLayoutManager
-        recyclerViewss.adapter = transactionAdapter*/
-
-
-        // Check if the user is logged in
         val sharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
         val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
 
         if (!isLoggedIn) {
-            // If not logged in, redirect to the login activity
             startActivity(Intent(this, AuthenticationLogin::class.java))
-            finish() // Prevent the user from going back to MainActivity without logging in
-            return // Important: Exit onCreate() to prevent further initialization
+            finish()
+            return
         }
 
         enableEdgeToEdge()
@@ -95,11 +81,7 @@ class MainActivity : AppCompatActivity() {
 
 
         val transactionAdding = findViewById<com.google.android.material.floatingactionbutton.FloatingActionButton>(R.id.fab)
-        /*val btnGoToRegister = findViewById<Button>(R.id.btnGoToRegister)
-        val btnGoToLogin = findViewById<Button>(R.id.btnGoToLogin)
-        val BudgetActivity = findViewById<Button>(R.id.BudgetActivity)
 
-*/
         val logoutButton: Button = findViewById(R.id.logoutButton)
 
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
@@ -132,7 +114,7 @@ class MainActivity : AppCompatActivity() {
         logoutButton.setOnClickListener {
             val sharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
             val editor = sharedPreferences.edit()
-            editor.clear() // Removes all stored data (isLoggedIn, userEmail, etc.)
+            editor.clear()
             editor.apply()
 
             Toast.makeText(this, "Logged out successfully!", Toast.LENGTH_SHORT).show()
@@ -140,7 +122,7 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, AuthenticationLogin::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
-            finish() // Prevent user from coming back via back button
+            finish()
         }
 
 
@@ -149,18 +131,6 @@ class MainActivity : AppCompatActivity() {
         transactionAdding.setOnClickListener {
             startActivity(Intent(this, AddTransactionActivity::class.java))
         }
-
-       /* btnGoToRegister.setOnClickListener {
-            startActivity(Intent(this, AuthenticationRegister::class.java))
-        }
-
-        btnGoToLogin.setOnClickListener {
-            startActivity(Intent(this, AuthenticationLogin::class.java)) // You might want to use a login activity here instead
-        }
-
-        BudgetActivity.setOnClickListener {
-            startActivity(Intent(this, BudgetPage::class.java))  // Start BudgetPage activity
-        }*/
 
         transactions = listOf()
         transactionAdapter = TransactionAdapter(transactions)
@@ -172,24 +142,23 @@ class MainActivity : AppCompatActivity() {
             this,
             TransactionsDatabase::class.java,
             "transactions"
-        )   .fallbackToDestructiveMigration() // Keep this for development, remove for production
+        )   .fallbackToDestructiveMigration()
             .addMigrations(
                 TransactionsDatabase.MIGRATION_1_2,
                 TransactionsDatabase.MIGRATION_2_3,
                 TransactionsDatabase.MIGRATION_3_4,
                 TransactionsDatabase.MIGRATION_4_5,
-                TransactionsDatabase.MIGRATION_5_6 // Add the new migration
+                TransactionsDatabase.MIGRATION_5_6
             )
             .build()
 
 
 
-        val dateButton: Button = findViewById(R.id.datePickerButton)  // Button for picking the date
+        val dateButton: Button = findViewById(R.id.datePickerButton)
         dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
 
 
-        // Set up RecyclerView and Adapter
         val recyclerViews: RecyclerView = findViewById(R.id.mainrecyclerview)
         transactionAdapter = TransactionAdapter(transactions)
         recyclerViews.adapter = transactionAdapter
@@ -197,14 +166,6 @@ class MainActivity : AppCompatActivity() {
         dateButton.setOnClickListener {
             showDatePickerDialog()
         }
-
-       /* // teseting to see if the code picks up
-        val recyclerViewsd = findViewById<RecyclerView>(R.id.mainrecyclerview) // assuming this is the ID of your RecyclerView
-        recyclerViewsd.layoutManager = LinearLayoutManager(this)
-        transactionAdapter = TransactionAdapter(emptyList())
-        recyclerView.adapter = transactionAdapter
-
-*/
 
         recyclerView.apply {
             adapter = transactionAdapter
@@ -215,11 +176,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun fetchAll() {
         GlobalScope.launch {
-            transactions = db.transactionDao().getAll() // ✅ NEW
+            transactions = db.transactionDao().getAll()
             runOnUiThread {
                 transactionAdapter.setData(transactions)
                 updateDashboard()
-               // loadChartData() // <-- move it here!
                 loadPieChartData()
                 Log.d("MainActivity", "Transactions fetched: $transactions")
             }
@@ -247,46 +207,7 @@ class MainActivity : AppCompatActivity() {
         fetchAll()
     }
 
-   /* private fun loadChartData() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val lineChart = findViewById<LineChart>(R.id.lineChart)
 
-            val incomeEntries = mutableListOf<Entry>()
-            val expenseEntries = mutableListOf<Entry>()
-
-            transactions.forEachIndexed { index, transaction ->
-                val amount = transaction.amount.toFloat()
-
-                if (transaction.type == "Income") {
-                    incomeEntries.add(Entry(index.toFloat(), amount))
-                } else if (transaction.type.equals("Expense")) {
-                    expenseEntries.add(Entry(index.toFloat(), amount))
-                }
-            }
-            withContext(Dispatchers.Main) {
-                val incomeDataSet = LineDataSet(incomeEntries, "Income").apply {
-                    color = Color.GREEN
-                    valueTextColor = Color.BLACK
-                    lineWidth = 2f
-                    circleRadius = 4f
-                }
-
-                val expenseDataSet = LineDataSet(expenseEntries, "Expenses").apply {
-                    color = Color.RED
-                    valueTextColor = Color.BLACK
-                    lineWidth = 2f
-                    circleRadius = 4f
-                }
-
-                val lineData = LineData(incomeDataSet, expenseDataSet)
-                lineChart.data = lineData
-                lineChart.description.text = "Income vs Expenses"
-                lineChart.animateX(1500)
-                lineChart.invalidate()
-            }
-        }
-
-    }*/
    private fun loadPieChartData() {
        CoroutineScope(Dispatchers.IO).launch {
            val pieChart = findViewById<PieChart>(R.id.pieChart)
@@ -305,8 +226,8 @@ class MainActivity : AppCompatActivity() {
            }
 
            val entries = listOf(
-               PieEntry(totalIncome, "Income"),    // Green
-               PieEntry(totalExpenses, "Expenses") // Red
+               PieEntry(totalIncome, "Income"),
+               PieEntry(totalExpenses, "Expenses")
            )
 
            withContext(Dispatchers.Main) {
@@ -314,8 +235,8 @@ class MainActivity : AppCompatActivity() {
                    valueTextColor = Color.BLACK
                    valueTextSize = 16f
                    setColors(
-                       Color.rgb(76, 175, 80), // Green for Income
-                       Color.rgb(244, 67, 54)  // Red for Expenses
+                       Color.rgb(76, 175, 80),
+                       Color.rgb(244, 67, 54)
 
                    )
                }
@@ -323,9 +244,6 @@ class MainActivity : AppCompatActivity() {
                val data = PieData(dataSet)
 
                pieChart.data = data
-
-               /*Color.rgb(76, 175, 80), // Green for Income
-               Color.rgb(244, 67, 54)  // Red for Expenses*/
 
                pieChart.setUsePercentValues(true)
                pieChart.description.isEnabled = false
@@ -336,158 +254,13 @@ class MainActivity : AppCompatActivity() {
        }
    }
 
-/*    private fun showDatePickerDialog() {
-        val calendar = Calendar.getInstance()
-        val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH)
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
-
-        val datePickerDialog = DatePickerDialog(
-            this,
-            { view, selectedYear, selectedMonth, selectedDay ->
-                val selectedDate = Calendar.getInstance()
-                selectedDate.set(selectedYear, selectedMonth, selectedDay)
-                val selectedTimestamp = selectedDate.timeInMillis
-
-                // Filter the transactions by the selected date
-                val filteredTransactions = filterTransactionsByDate(selectedTimestamp)
-                transactionAdapter.setData(filteredTransactions)  // Update the adapter with filtered data
-            },
-            year, month, day
-        )
-        datePickerDialog.show()
-    }*/
-
-
-   /* private fun showDatePickerDialog() {
-        val calendar = Calendar.getInstance()
-        val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH)
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
-
-        val dateRangePicker =
-            MaterialDatePicker.Builder.dateRangePicker()
-                .setTitleText("Select Date Range")
-                .build()
-
-        dateRangePicker.show(supportFragmentManager, "DATE_RANGE_PICKER")
-
-        dateRangePicker.addOnPositiveButtonClickListener { selection ->
-            val startDate = selection.first
-            val endDate = selection.second
-            // Do something with startDate and endDate
-            Toast.makeText(this, "From: ${Date(startDate)}\nTo: ${Date(endDate)}", Toast.LENGTH_LONG).show()
-        }
-
-    }*/
-   /*private fun showDatePickerDialog() {
-       val calendar = Calendar.getInstance()
-       val year = calendar.get(Calendar.YEAR)
-       val month = calendar.get(Calendar.MONTH)
-       val day = calendar.get(Calendar.DAY_OF_MONTH)
-
-       // Initialize the Date Range Picker
-       val dateRangePicker = MaterialDatePicker.Builder.dateRangePicker()
-           .setTitleText("Select Date Range")
-           .build()
-
-       dateRangePicker.show(supportFragmentManager, "DATE_RANGE_PICKER")
-
-       // Handling the selection of dates from the picker
-       dateRangePicker.addOnPositiveButtonClickListener { selection ->
-           val startDate = selection.first
-           val endDate = selection.second
-           // Handle the start and end dates
-           Toast.makeText(this, "From: ${Date(startDate)}\nTo: ${Date(endDate)}", Toast.LENGTH_LONG).show()
-       }
-   }
-*/
-
-
-
-
-
-    /*private fun filterTransactionsByDate(selectedTimestamp: Long): List<Transaction> {
-        return transactions.filter {
-            val transactionDate = Date(it.date)  // Assuming date is stored as a timestamp
-            val selectedDate = Date(selectedTimestamp)
-
-            // Compare dates (ignoring time)
-            val sdf = SimpleDateFormat("yyyy-MM-dd")
-            sdf.format(transactionDate) == sdf.format(selectedDate)
-        }
-    }*/
-   /* private fun filterTransactionsByDate(selectedTimestamp: Long): List<Transaction> {
-        // Get the current date
-        val currentTimestamp = System.currentTimeMillis()
-
-        // Filter transactions between the selected date and the current date
-        val filtered = transactions.filter {
-            val transactionDate = Date(it.date)  // Assuming date is stored as a timestamp
-
-            // Check if the transaction date is between selected date and current date
-            transactionDate.time in selectedTimestamp..currentTimestamp
-        }
-
-        Log.d("FilteredTransactions", filtered.toString())  // Check the filtered list
-        return filtered
-    }*/
-
-    // Start Date Picker
-//    val startDateSetListener = DatePickerDialog.OnDateSetListener { _, year, month, day ->
-//        val calendar = Calendar.getInstance()
-//        calendar.set(year, month, day)
-//        startDateTimestamp = calendar.timeInMillis
-//
-//        // Show End Date Picker after selecting Start Date
-//        showEndDatePicker()
-//    }
-
- /*   fun showStartDatePicker() {
-        val calendar = Calendar.getInstance()
-        DatePickerDialog(this, startDateSetListener,
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)).show()
-    }
-*/
-    // End Date Picker
-    /*val endDateSetListener = DatePickerDialog.OnDateSetListener { _, year, month, day ->
-        val calendar = Calendar.getInstance()
-        calendar.set(year, month, day)
-        endDateTimestamp = calendar.timeInMillis
-
-        // Now filter the transactions
-        val filtered = filterTransactionsBetweenDates(startDateTimestamp, endDateTimestamp)
-        updateRecyclerView(filtered)
-    }
-
-    fun showEndDatePicker() {
-        val calendar = Calendar.getInstance()
-        DatePickerDialog(this, endDateSetListener,
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)).show()
-    }*/
-    /*private fun filterTransactionsBetweenDates(start: Long, end: Long): List<Transaction> {
-        return transactions.filter {
-            val transactionTime = it.date  // assuming this is a Long (timestamp)
-            transactionTime in start..end
-        }
-    }
-
-    private fun updateRecyclerView(transactions: List<Transaction>) {
-        transactionAdapter.setData(transactions)
-    }*/
-// Assuming you have a filter function already defined
  private fun filterTransactionsByDateRange(startDateTimestamp: Long, endDateTimestamp: Long): List<Transaction> {
      return transactions.filter {
-         val transactionDate = Date(it.date) // Assuming transaction date is stored as a timestamp
+         val transactionDate = Date(it.date)
          transactionDate.time in startDateTimestamp..endDateTimestamp
      }
  }
 
-    // In your date range picker dialog:
     private fun showDatePickerDialog() {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
@@ -504,31 +277,17 @@ class MainActivity : AppCompatActivity() {
             val startDate = selection.first
             val endDate = selection.second
 
-            // Convert to milliseconds for easier comparison
             val startDateTimestamp = startDate
             val endDateTimestamp = endDate
 
-            // Filter the transactions by the selected date range
             val filteredTransactions = filterTransactionsByDateRange(startDateTimestamp, endDateTimestamp)
 
-            // Update the adapter with the filtered data
             transactionAdapter.setData(filteredTransactions)
 
-            // Notify the adapter that the data has changed
             transactionAdapter.notifyDataSetChanged()
 
-            // Show Toast with the selected dates
             Toast.makeText(this, "From: ${Date(startDateTimestamp)}\nTo: ${Date(endDateTimestamp)}", Toast.LENGTH_LONG).show()
         }
     }
-
-
-
-
-
-
-
-
-
 }
 

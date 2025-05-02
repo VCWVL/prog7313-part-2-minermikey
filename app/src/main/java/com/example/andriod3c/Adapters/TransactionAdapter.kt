@@ -29,7 +29,6 @@ RecyclerView.Adapter<TransactionAdapter.TransactionHolder>() {
         val transaction = transactions[position]
         val context = holder.amount.context
 
-        // Format the amounts based on whether it's income or expense
         if (transaction.amount >= 0) {
             holder.amount.text = "+ $%.2f".format(transaction.amount)
             holder.amount.setTextColor(ContextCompat.getColor(context, R.color.green))
@@ -44,7 +43,6 @@ RecyclerView.Adapter<TransactionAdapter.TransactionHolder>() {
             val bitmap = BitmapFactory.decodeByteArray(transaction.image, 0, transaction.image.size)
             holder.transactionImage.setImageBitmap(bitmap)
         } else {
-            // Optional: set a placeholder if image is null
             holder.transactionImage.setImageResource(R.drawable.ic_placeholder)
         }
 

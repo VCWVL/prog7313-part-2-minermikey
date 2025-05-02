@@ -11,12 +11,12 @@ data class Transaction (
     val amount: Double,
     val description: String,
     val category: String,
-    val date: Long, // Store timestamp (should be non-null)
-    val startTime: String?,  // Make these nullable
-    val endTime: String?,    // Make these nullable
-    val type: String, // "income" or "expense"
-    @ColumnInfo(typeAffinity = ColumnInfo.BLOB)  // Add this annotation for the image
-    val image: ByteArray? , // Use ByteArray? to store the image data
-    val username: String // Add the username field
+    val date: Long,
+    val startTime: String?,
+    val endTime: String?,
+    val type: String,
+    @ColumnInfo(typeAffinity = ColumnInfo.BLOB)
+    val image: ByteArray? ,
+    val username: String
 
 )
