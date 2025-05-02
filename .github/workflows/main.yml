@@ -1,0 +1,42 @@
+name: Android Tests
+
+on:
+  push:
+    branches: [ main, develop ] # Trigger on pushes to these branches
+  pull_request:
+    branches: [ main, develop ] # Trigger on pull requests targeting these branches
+
+jobs:
+  test:
+    name: Run Android Tests
+    runs-on: ubuntu-latest # Use a Linux environment for testing
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11' # Or your project's Java version
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          sdk-api-level: '35' # Or your target SDK API level
+          # Add any other necessary SDK components
+          # e.g., build-tools:33.0.0, cmdline-tools:latest
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: Run unit tests
+        run: ./gradlew testDebugUnitTest
+
+      - name: Run connected (instrumentation) tests
+        uses: android-actions/run-androidTest@v3
+        with:
+          os-api-level: '35' # API level for the emulator
+          target: 'default' # Target device/emulator
+          abi: 'armeabi-v7a' # ABI for the emulator
