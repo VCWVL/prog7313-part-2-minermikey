@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Define the color directly -->
+    <color name="greenBlue">#49D99E</color>
+
+
+    <!-- Or alias another color -->
+    <item name="androidTextColor" type="color">@color/GreenBlue</item>
+    <item name="androidGreenTextColor" type="color">@color/green</item>
+    <item name="androidRedTextColor" type="color">@color/red</item>
+    <item name="colorControlActivated" type="color">@color/red</item>
+
+
+
+
+</resources>
