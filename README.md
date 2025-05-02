@@ -1,3 +1,7 @@
+Authors - 
+# ST10273388 - Michael Singh 
+# ST10251406 - Kiran Sompersadh
+
 # Budget Application 
 
 ## Features
